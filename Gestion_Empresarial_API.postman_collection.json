@@ -1,0 +1,704 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Sistema Gestión Empresarial - API",
+		"description": "Colección completa de endpoints para el Sistema de Gestión Empresarial con Spring Boot.\n\n**Base de Datos:**\n- Empleados: MySQL\n- Proyectos: MongoDB Atlas\n\n**Autenticación:** Spring Security con Session\n\n**Versión:** 1.0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Guardar cookies de sesión automáticamente",
+									"pm.test(\"Login exitoso\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(pm.cookies.has('JSESSIONID')).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "admin@gestionempresarial.com",
+									"description": "Email del usuario"
+								},
+								{
+									"key": "password",
+									"value": "admin123",
+									"description": "Contraseña"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "Iniciar sesión en el sistema. Devuelve cookie JSESSIONID que se usa en todas las peticiones posteriores.\n\n**Usuarios disponibles:**\n- Admin: admin@gestionempresarial.com / admin123\n- Supervisor: supervisor@gestionempresarial.com / super123"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"logout"
+							]
+						},
+						"description": "Cerrar sesión y limpiar cookie JSESSIONID."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de autenticación con Spring Security"
+		},
+		{
+			"name": "Empleados API",
+			"item": [
+				{
+					"name": "Listar Todos los Empleados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/empleados",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"empleados"
+							]
+						},
+						"description": "Obtiene todos los empleados almacenados en MySQL."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Empleado por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/empleados/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"empleados",
+								"1"
+							]
+						},
+						"description": "Obtiene un empleado específico por su ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Empleado",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Carlos Martínez\",\n    \"cargo\": \"Desarrollador Full Stack\",\n    \"salario\": 85000,\n    \"email\": \"carlos.martinez@empresa.com\",\n    \"departamento\": \"Tecnología\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/empleados",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"empleados"
+							]
+						},
+						"description": "Crea un nuevo empleado en MySQL.\n\n**Validaciones:**\n- nombre: requerido, 1-100 caracteres\n- cargo: requerido, 1-100 caracteres\n- salario: requerido, mayor a 0\n- email: requerido, formato válido, único\n- departamento: opcional, máximo 100 caracteres"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Empleado",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Carlos Martínez Actualizado\",\n    \"cargo\": \"Senior Full Stack Developer\",\n    \"salario\": 95000,\n    \"email\": \"carlos.martinez@empresa.com\",\n    \"departamento\": \"Tecnología\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/empleados/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"empleados",
+								"1"
+							]
+						},
+						"description": "Actualiza un empleado existente por su ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Empleado",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/empleados/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"empleados",
+								"1"
+							]
+						},
+						"description": "Elimina un empleado por su ID. Verifica que no tenga proyectos asignados."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Empleados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/empleados/buscar?termino=desarrollador",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"empleados",
+								"buscar"
+							],
+							"query": [
+								{
+									"key": "termino",
+									"value": "desarrollador",
+									"description": "Búsqueda por nombre o cargo"
+								}
+							]
+						},
+						"description": "Busca empleados por nombre o cargo usando LIKE."
+					},
+					"response": []
+				}
+			],
+			"description": "CRUD completo de empleados (MySQL)"
+		},
+		{
+			"name": "Proyectos API",
+			"item": [
+				{
+					"name": "Listar Todos los Proyectos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/proyectos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos"
+							]
+						},
+						"description": "Obtiene todos los proyectos almacenados en MongoDB Atlas."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Proyecto por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/proyectos/{{proyecto_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos",
+								"{{proyecto_id}}"
+							]
+						},
+						"description": "Obtiene un proyecto específico por su ID de MongoDB."
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Proyecto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Sistema CRM Empresarial\",\n    \"descripcion\": \"Desarrollo de sistema completo de gestión de relaciones con clientes\",\n    \"empleadoId\": 1,\n    \"estado\": \"ACTIVO\",\n    \"tareas\": [\n        {\n            \"titulo\": \"Diseño de base de datos\",\n            \"estado\": \"COMPLETO\"\n        },\n        {\n            \"titulo\": \"Desarrollo backend API REST\",\n            \"estado\": \"EN_PROGRESO\"\n        },\n        {\n            \"titulo\": \"Interfaz de usuario\",\n            \"estado\": \"PENDIENTE\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/proyectos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos"
+							]
+						},
+						"description": "Crea un nuevo proyecto en MongoDB.\n\n**Estados válidos:**\n- ACTIVO\n- EN_PROGRESO\n- COMPLETADO\n- PAUSADO\n\n**Estados de tarea:**\n- PENDIENTE\n- EN_PROGRESO\n- COMPLETO"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Proyecto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Sistema CRM Empresarial Actualizado\",\n    \"descripcion\": \"Desarrollo de sistema completo de gestión de relaciones con clientes - Versión 2.0\",\n    \"empleadoId\": 1,\n    \"estado\": \"EN_PROGRESO\",\n    \"tareas\": [\n        {\n            \"titulo\": \"Diseño de base de datos\",\n            \"estado\": \"COMPLETO\"\n        },\n        {\n            \"titulo\": \"Desarrollo backend API REST\",\n            \"estado\": \"COMPLETO\"\n        },\n        {\n            \"titulo\": \"Interfaz de usuario\",\n            \"estado\": \"EN_PROGRESO\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/proyectos/{{proyecto_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos",
+								"{{proyecto_id}}"
+							]
+						},
+						"description": "Actualiza un proyecto existente por su ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Proyecto",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/proyectos/{{proyecto_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos",
+								"{{proyecto_id}}"
+							]
+						},
+						"description": "Elimina un proyecto por su ID de MongoDB."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Proyectos por Empleado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/proyectos/empleado/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos",
+								"empleado",
+								"1"
+							]
+						},
+						"description": "Obtiene todos los proyectos asignados a un empleado específico."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Proyectos por Nombre",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/proyectos/buscar/nombre?nombre=CRM",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos",
+								"buscar",
+								"nombre"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": "CRM",
+									"description": "Buscar por nombre del proyecto"
+								}
+							]
+						},
+						"description": "Busca proyectos por nombre (case insensitive)."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Proyectos por Descripción",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/proyectos/buscar/descripcion?descripcion=sistema",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos",
+								"buscar",
+								"descripcion"
+							],
+							"query": [
+								{
+									"key": "descripcion",
+									"value": "sistema",
+									"description": "Buscar por descripción"
+								}
+							]
+						},
+						"description": "Busca proyectos por descripción (case insensitive)."
+					},
+					"response": []
+				},
+				{
+					"name": "Agregar Tarea a Proyecto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Implementar autenticación JWT\",\n    \"estado\": \"PENDIENTE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/proyectos/{{proyecto_id}}/tareas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos",
+								"{{proyecto_id}}",
+								"tareas"
+							]
+						},
+						"description": "Agrega una nueva tarea a un proyecto existente."
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Estado de Tarea",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"estado\": \"COMPLETO\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/proyectos/{{proyecto_id}}/tareas/0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos",
+								"{{proyecto_id}}",
+								"tareas",
+								"0"
+							]
+						},
+						"description": "Actualiza el estado de una tarea específica por su índice.\n\n**Nota:** El índice comienza en 0."
+					},
+					"response": []
+				},
+				{
+					"name": "Estadísticas por Empleado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/proyectos/estadisticas/empleado/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos",
+								"estadisticas",
+								"empleado",
+								"1"
+							]
+						},
+						"description": "Obtiene estadísticas de proyectos y tareas de un empleado:\n- Cantidad de proyectos\n- Tareas completas\n- Tareas pendientes"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar por Estado de Tareas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/proyectos/buscar/estado-tareas?estado=PENDIENTE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"proyectos",
+								"buscar",
+								"estado-tareas"
+							],
+							"query": [
+								{
+									"key": "estado",
+									"value": "PENDIENTE",
+									"description": "PENDIENTE, EN_PROGRESO, o COMPLETO"
+								}
+							]
+						},
+						"description": "Obtiene proyectos que tienen tareas en un estado específico."
+					},
+					"response": []
+				}
+			],
+			"description": "CRUD completo de proyectos (MongoDB Atlas) con gestión de tareas"
+		},
+		{
+			"name": "Exportación",
+			"item": [
+				{
+					"name": "Exportar Empleados a Excel",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/export/empleados/excel?termino=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"export",
+								"empleados",
+								"excel"
+							],
+							"query": [
+								{
+									"key": "termino",
+									"value": "",
+									"description": "Opcional: filtro de búsqueda"
+								}
+							]
+						},
+						"description": "Exporta la lista de empleados a un archivo Excel (.xlsx).\n\nSi se proporciona un término de búsqueda, solo exporta los empleados filtrados."
+					},
+					"response": []
+				},
+				{
+					"name": "Exportar Empleados a PDF",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/export/empleados/pdf?termino=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"export",
+								"empleados",
+								"pdf"
+							],
+							"query": [
+								{
+									"key": "termino",
+									"value": "",
+									"description": "Opcional: filtro de búsqueda"
+								}
+							]
+						},
+						"description": "Exporta la lista de empleados a un archivo PDF con formato profesional."
+					},
+					"response": []
+				},
+				{
+					"name": "Exportar Proyectos a Excel",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/export/proyectos/excel?buscar=&empleadoId=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"export",
+								"proyectos",
+								"excel"
+							],
+							"query": [
+								{
+									"key": "buscar",
+									"value": "",
+									"description": "Opcional: término de búsqueda"
+								},
+								{
+									"key": "empleadoId",
+									"value": "",
+									"description": "Opcional: filtrar por empleado"
+								}
+							]
+						},
+						"description": "Exporta la lista de proyectos a un archivo Excel (.xlsx).\n\nSoporta filtros por búsqueda y empleado."
+					},
+					"response": []
+				},
+				{
+					"name": "Exportar Proyectos a PDF",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/export/proyectos/pdf?buscar=&empleadoId=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"export",
+								"proyectos",
+								"pdf"
+							],
+							"query": [
+								{
+									"key": "buscar",
+									"value": "",
+									"description": "Opcional: término de búsqueda"
+								},
+								{
+									"key": "empleadoId",
+									"value": "",
+									"description": "Opcional: filtrar por empleado"
+								}
+							]
+						},
+						"description": "Exporta la lista de proyectos a un archivo PDF con formato profesional."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para exportar datos a Excel y PDF"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script que se ejecuta antes de cada petición",
+					"// Las cookies de sesión se manejan automáticamente"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script que se ejecuta después de cada petición",
+					"// Puedes agregar validaciones globales aquí"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "proyecto_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
